@@ -1,0 +1,50 @@
+#%RAML 0.8
+baseUri: http://flight-svc-impl.cloudhub.io
+title: Flight Service
+version: 1.0
+   
+traits: 
+  - content-type-required:
+      headers:
+        Content-Type:
+          type: string
+          example: application/json
+  - accept-required:
+      headers: 
+        Accept:
+          type: string
+          example: application/json
+          
+  - standard-error-responses:
+      responses:
+        400:
+          description:
+            The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing).
+          body:
+            application/json:
+        405:
+          description:
+            A request was made of a resource using a request method not supported by that resource; for example, using GET on a form which requires data to be presented via POST, or using PUT on a read-only resource.
+          body:
+            application/json:
+        500:
+          description:
+            That went badly, check to see if there is an x-implementation-status-code header value returned from the API implementation.
+          body:
+            application/json:  
+    
+/flights:
+    is: [content-type-required,accept-required,standard-error-responses]
+    
+    get:
+      description: Get the list of flights
+      queryParameters: 
+        destination:
+          type: string
+          example: SFO
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: |
+               {"flights":[{"airlineName": "American Airlines","availableSeats": 1,"departureDate": "02-11-2015 00:00:00","destination": "SFO","flightCode": "rree1093","origination": "MUA","planeType": "Boeing 737","price": 142},{"airlineName": "American Airlines","availableSeats": 30,"departureDate": "02-20-2015 00:00:00","destination": "SFO","flightCode": "rree2000","origination": "MUA","planeType": "Boeing 737","price": 300},{"airlineName": "American Airlines","availableSeats": 100,"departureDate": "01-20-2015 00:00:00","destination": "SFO","flightCode": "rree4567","origination": "MUA","planeType": "Boeing 737","price": 456}]}
