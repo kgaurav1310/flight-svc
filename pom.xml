@@ -4,7 +4,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mycompany</groupId>
-	<artifactId>flight-svc-implementation</artifactId>
+	<artifactId>flight-svc-implement</artifactId>
 	<version>1.0</version>
 	<packaging>mule</packaging>
 	<name>Mule flight-svc-impl Application</name>
