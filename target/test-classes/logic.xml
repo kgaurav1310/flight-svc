@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:jdbc-ee="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/ee/jdbc/current/mule-jdbc-ee.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+
+	<db:mysql-config name="MySQL_Configuration" host="${db.host}" port="${db.port}" user="${db.user}" password="${db.password}" database="${db.database}" doc:name="MySQL Configuration"></db:mysql-config>
+
+	<flow name="get:/flights:flight-svc-config">
+	
+		<custom-interceptor class="org.mule.consulting.interceptor.TimerInterceptor"
+			doc:name="Timer Interceptor">
+			<spring:property name="timerName"
+				value="flight-svc get:/flights timer" />
+		</custom-interceptor>
+		<logger
+			message="flight-svc enter get:/flights {&quot;transactionId&quot;:&quot;#[flowVars['x-ps-transaction-id']]&quot;,&quot;event&quot;:&quot;#[message.id]&quot;]&quot;}"
+			category="applicationInfo" level="INFO" doc:name="Logger" />
+		<set-variable variableName="destination"
+			value="#[message.inboundProperties.'http.query.params'.destination]"
+			doc:name="Destination" />
+		<choice doc:name="Choice">
+			<when
+				expression="#[flowVars['destination'] == null || flowVars['destination'].trim().length() == 0]">
+				<component
+					class="org.mule.consulting.flowcontrol.GenerateMandatoryFieldsMissing"
+					doc:name="Generate Mandatory Field Missing Exception" />
+			</when>
+			<otherwise>
+				<db:select config-ref="MySQL_Configuration" doc:name="Database">
+                    <db:parameterized-query><![CDATA[SELECT 
+*
+From ${db.table}
+where toAirport = #[flowVars['destination']]]]></db:parameterized-query>
+				</db:select>
+               <choice doc:name="Choice">
+					<when expression="#[payload.size() &gt; 0]">
+                        <json:object-to-json-transformer doc:name="Object to JSON"/>
+						<!-- <dw:transform-message doc:name="Transform Message">
+							<dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+{
+	flights: payload filter ($.seatsAvailable != 'none') map {
+		airlineName: $.airlineName,
+		availableSeats: $.seatsAvailable as :number {format:"###"},
+		departureDate: $.takeOffDate as :string {format: "MM-dd-YYYY HH:mm:ss"},
+		destination: $.toAirport,
+		flightCode: $.code1 ++ $.code2,
+		origination: $.fromAirport,
+		planeType: $.planeType,
+		price: $.price as :number
+	}
+	
+}]]></dw:set-payload>
+						</dw:transform-message> -->
+					</when>
+					<otherwise>
+						<set-payload
+							value="#['{&quot;message&quot;: &quot;No flights available for requested destination&quot;}']"
+							doc:name="Set Payload" />
+					</otherwise>
+				</choice>
+			</otherwise>
+		</choice>
+
+		<logger
+			message="flight-svc exit get:/flights {&quot;transactionId&quot;:&quot;#[flowVars['x-ps-transaction-id']]&quot;,&quot;event&quot;:&quot;#[message.id]&quot;]&quot;}"
+			category="applicationInfo" level="INFO" doc:name="Logger" />
+	</flow>
+
+</mule>

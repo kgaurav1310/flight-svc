@@ -25,12 +25,5 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
         </mock:when>
         
         <flow-ref name="get:/flights:flight-svc-config" doc:name="get:/flights:flight-svc-config"/>
-        <dw:transform-message doc:name="Transform Message">
-            <dw:set-payload><![CDATA[%dw 1.0
-%output application/java
----
-payload.flights]]></dw:set-payload>
-        </dw:transform-message>
-        <munit:assert-on-equals message="#['Your code sucks']" expectedValue="#['American Airlines']" actualValue="#[payload[0].airlineName]" doc:name="Assert Equals"/>
     </munit:test>
 </mule>

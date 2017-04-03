@@ -1,4 +1,4 @@
-<testsuite name="logic-test-suite" time="3.643" failures="0" errors="0" skipped="0" tests="1">
+<testsuite name="logic-test-suite" time="2.177" failures="0" errors="0" skipped="0" tests="1">
   <properties>
     <property key="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property key="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_91.jdk/Contents/Home/jre/lib"/>
@@ -40,7 +40,7 @@
     <property key="java.class.path" value="/usr/local/lib/apache-maven-3.3.9/boot/plexus-classworlds-2.5.2.jar"/>
     <property key="user.name" value="KG"/>
     <property key="java.vm.specification.version" value="1.8"/>
-    <property key="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -Du=exp1310 -Dp=Matrix007 clean install deploy"/>
+    <property key="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher clean install"/>
     <property key="java.home" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_91.jdk/Contents/Home/jre"/>
     <property key="sun.arch.data.model" value="64"/>
     <property key="user.language" value="en"/>
@@ -59,10 +59,8 @@
     <property key="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property key="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property key="sun.cpu.isalist" value=""/>
-    <property key="p" value="Matrix007"/>
     <property key="mule.testingMode" value="true"/>
-    <property key="u" value="exp1310"/>
     <property key="mule.working.dir" value="/Users/KG/Documents/workspace/workspace-anypoint/flight-svc-impl/target/.mule"/>
   </properties>
-  <testcase time="3.02" name="logic-test-suite-get:/flights:flight-svc-configTest" classname="logic-test-suite"/>
+  <testcase time="1.84" name="logic-test-suite-get:/flights:flight-svc-configTest" classname="logic-test-suite"/>
 </testsuite>
